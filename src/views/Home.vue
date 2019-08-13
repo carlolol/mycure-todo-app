@@ -1,13 +1,20 @@
 <template>
-  <HelloWorld />
+
+  <v-app>
+    
+    <v-content>
+      This is the home content
+    </v-content>
+
+  </v-app>
+
 </template>
 
 <script>
-import HelloWorld from '../components/HelloWorld';
 
 export default {
-  components: {
-    HelloWorld,
-  },
+  data: () => ({
+    //
+  }),
 };
 </script>
