@@ -33,19 +33,16 @@
                   type="text"
                   v-model="username"
                   :rules="usernameRules"
-                  required
                 >
                 </v-text-field>
 
                 <v-text-field
-                  id="password"
                   label="Password"
                   name="password"
                   prepend-icon="mdi-lock"
                   type="password"
                   v-model="password"
                   :rules="passwordRules"
-                  required
                 >
                 </v-text-field>
 
@@ -147,25 +144,14 @@
           };
           
           this.$store.dispatch('signInAction', user)
-            .then(() => {
+            .then((e) => {
               this.isSubmitting = false;
               this.$router.push('/home');
             })
             .catch((error) => {
               this.isSubmitting = false;
-              console.log(error)
+              console.log(error);
             });
-
-          // auth.signInWithEmailAndPassword(this.username + this.dummyDomain, this.password).then((e) => {
-          //   this.isSubmitting = false;
-          //   this.$router.push('/home');
-          // }).catch((error) => {
-          //   var errorCode = error.code;
-          //   var errorMessage = error.message;
-
-          //   this.isSubmitting = false;
-          //   console.log(errorCode, errorMessage);
-          // });
         }
       }
     }

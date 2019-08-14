@@ -22,23 +22,49 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn 
-        text
-        @click="signOut"
-        :loading="isSigningOut"
-        v-show="!!user"
-      >
-        <span>Sign Out</span>
-        <v-icon right>mdi-exit-to-app</v-icon>
-      </v-btn>
+      <v-menu offset-y>
+
+        <template v-slot:activator="{ on }">
+          <v-btn 
+            color="grey" 
+            text v-on="on" 
+            v-show="user"
+            :loading="isSigningOut"
+            fab
+          >
+            <v-icon>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item 
+            @click.stop="updatePopup(true)"
+          >
+            <v-icon left>mdi-pencil-plus-outline</v-icon>
+            <span>New Note</span>
+          </v-list-item>
+
+          <v-list-item 
+            @click="signOut"
+          >
+            <v-icon left>mdi-exit-to-app</v-icon>
+            <span>Sign Out</span>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-toolbar>
+    <Popup/>
   </nav>
 </template>
 
 <script>
   import {mapActions, mapGetters} from 'vuex';
+  import Popup from '@/components/Popup'
 
   export default {
+    components: {
+      Popup
+    },
     data: () => ({
       snackbar: false,
       isSigningOut: false
@@ -64,22 +90,9 @@
             this.isSigningOut = false;
             console.log(error)
           });
-
-        // auth.signOut().then((e) => {
-        //   console.log(auth);
-        //   console.log(auth.currentUser);
-        //   console.log(auth.currentUser.email);
-        //   this.isSigningOut = false;
-        //   this.$router.push('/');
-        // }).catch((error) => {
-        //   var errorCode = error.code;
-        //   var errorMessage = error.message;
-
-        //   this.isSigningOut = false;
-        //   console.log(errorCode, errorMessage);
-        // });
-        
-        // this.$router.push('/');
+      },
+      updatePopup(showPopup){
+        this.$store.dispatch('updatePopup', {showPopup: showPopup})
       }
     }
   };
