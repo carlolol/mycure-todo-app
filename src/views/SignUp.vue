@@ -8,9 +8,10 @@
       >
 
         <v-col
-          cols="12"
-          sm="8"
-          md="4"
+          cols="10"
+          sm="7"
+          md="5"
+          lg="4"
         >
 
           <v-card elevation="5">
@@ -48,6 +49,7 @@
                   type="text"
                   v-model="username"
                   :rules="usernameRules"
+                  @keyup.enter="validate"
                 >
                 </v-text-field>
 
@@ -59,10 +61,18 @@
                   type="password"
                   v-model="password"
                   :rules="passwordRules"
+                  @keyup.enter="validate"
                 >
                 </v-text-field>
 
               </v-form>
+
+              <p 
+                class="my-2 pl-5 red--text caption"
+                v-if="hasError"
+              >
+                {{ errorMessage }}
+              </p>
               
             </v-card-text>
             
@@ -106,7 +116,9 @@
         v => !!v || 'Password is required',
         v => (v && v.length > 5) || 'Password length must be greater than 5 characters'
       ],
-      isSubmitting: false
+      isSubmitting: false,
+      hasError: false,
+      errorMessage: ""
     }),
     methods: {
       validate () {
@@ -121,11 +133,14 @@
           this.$store.dispatch('signUpAction', user)
             .then(() => {
               this.isSubmitting = false;
+              this.hasError = false;
+              this.errorMessage = "";
               this.$router.push('/');
             })
             .catch((error) => {
               this.isSubmitting = false;
-              console.log(error)
+              this.hasError = true;
+              this.errorMessage = error;
             });
 
           // auth.createUserWithEmailAndPassword(this.username + this.dummyDomain, this.password).then((e) => {

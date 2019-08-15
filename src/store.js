@@ -73,7 +73,7 @@ export default new Vuex.Store({
             commit('setStatus', 'failed')
             commit('setError', error.message)
             commit('setMessage', null)
-            reject('Failed. Reason: ' + error.message)
+            reject(error.message.replace("email address", "username"))
           })
       })
     },
@@ -123,7 +123,17 @@ export default new Vuex.Store({
             commit('setStatus', 'failed')
             commit('setError', error.message)
             commit('setMessage', null)
-            reject('Failed. Reason: ' + error.message)
+            reject(error.message
+              .replace(
+                "There is no user record corresponding to this identifier. The user may have been deleted.", 
+                "The username you've entered doesn't match any account."
+              )
+              .replace(
+                "The password is invalid or the user does not have a password.",
+                "The password you've entered is incorrect."
+              )
+              .replace("email address", "username")
+            )
           })
       })
     },

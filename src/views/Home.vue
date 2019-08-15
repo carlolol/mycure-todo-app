@@ -42,102 +42,94 @@
           sm="8"
           md="4"
         >
-          <!-- <v-flex
-            lg2
-            md3
-            sm4
-            xs6
-          > -->
-            <v-card
-              class="px-2 py-0 ma-0"
-              outlined
+          <v-card
+            class="px-2 py-0 ma-0"
+            outlined
+          >
+            <v-toolbar
+              color="white"
+              flat
+              class="subtitle-1"
             >
-              <v-toolbar
-                color="white"
-                flat
-                class="subtitle-1"
-              >
-                <v-toolbar-title>
-                  {{ todo.name }}
-                </v-toolbar-title>
+              <v-toolbar-title>
+                {{ todo.name }}
+              </v-toolbar-title>
 
-                <v-spacer></v-spacer>
+              <v-spacer></v-spacer>
 
-                <v-tooltip bottom>
-                  
-                  <template v-slot:activator="{ on }">
-                    <v-btn 
-                      fab
-                      text
-                      x-small
-                      @click.stop="updateIsEdit(true, todo.id)"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-pencil-outline</v-icon>
-                    </v-btn>
-                  </template>
-
-                  <span>Edit</span>
-                </v-tooltip>
-
-                <v-tooltip bottom>
-
-                  <template v-slot:activator="{ on }">
-                    <v-btn 
-                      fab
-                      text
-                      x-small
-                      color="orange"
-                      @click.stop="deleteTodo(todo.id)"
-                      :loading="isLoading"
-                      v-on="on"
-                    >
-                      <v-icon>mdi-trash-can-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  
-                  <span>Delete</span>
-                </v-tooltip>
-
-              </v-toolbar>
-
-              <v-divider class="my-0"></v-divider>
-
-              <v-card-text class="body-2">
-                {{ todo.description }}
-              </v-card-text>
-
-              <v-card-actions class="pb-0">
-
-                <v-chip 
-                  small 
-                  outlined
-                  color="warning"
-                >
-                  <v-icon 
-                    small 
-                    left
+              <v-tooltip bottom>
+                
+                <template v-slot:activator="{ on }">
+                  <v-btn 
+                    fab
+                    text
+                    x-small
+                    @click.stop="updateIsEdit(true, todo.id)"
+                    v-on="on"
                   >
-                    mdi-timer
-                  </v-icon>
-                  {{ todo.deadline }}
-                </v-chip>
+                    <v-icon>mdi-pencil-outline</v-icon>
+                  </v-btn>
+                </template>
 
-                <v-spacer></v-spacer>
+                <span>Edit</span>
+              </v-tooltip>
 
-                <v-chip 
+              <v-tooltip bottom>
+
+                <template v-slot:activator="{ on }">
+                  <v-btn 
+                    fab
+                    text
+                    x-small
+                    color="orange"
+                    @click.stop="deleteTodo(todo.id)"
+                    :loading="isLoading"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-trash-can-outline</v-icon>
+                  </v-btn>
+                </template>
+                
+                <span>Delete</span>
+              </v-tooltip>
+
+            </v-toolbar>
+
+            <v-divider class="my-0"></v-divider>
+
+            <v-card-text class="body-2">
+              {{ todo.description }}
+            </v-card-text>
+
+            <v-card-actions class="pb-0">
+
+              <v-chip 
+                small 
+                outlined
+                color="warning"
+              >
+                <v-icon 
                   small 
-                  :color="getColor(todo.status)" 
-                  class="white--text caption my-2"
-                  @click="updateTodoStatus(todo.id, todo.status==='uncompleted' ? 'completed' : 'uncompleted')"
+                  left
                 >
-                  {{ todo.status }}
-                </v-chip>
+                  mdi-timer
+                </v-icon>
+                {{ formatDate(todo.deadline) }}
+              </v-chip>
 
-              </v-card-actions>
-            </v-card>
-          <!-- </v-flex> -->
-          
+              <v-spacer></v-spacer>
+
+              <v-chip 
+                small 
+                :color="getColor(todo.status)" 
+                class="white--text caption my-2"
+                @click="updateTodoStatus(todo.id, todo.status==='uncompleted' ? 'completed' : 'uncompleted')"
+              >
+                {{ todo.status }}
+              </v-chip>
+
+            </v-card-actions>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -145,6 +137,7 @@
 </template>
 
 <script>
+  import format from 'date-fns/format'
   import {mapActions, mapGetters} from 'vuex';
 
   export default {
@@ -155,16 +148,22 @@
     }),
 
     computed: {
+
       ...mapGetters([
         'todos',
         'getTodoById'
       ])
+
     },
 
     methods: {
 
       getColor: (status) => {
         return status==="completed" ? "#4caf50" : "#f37125";
+      },
+
+      formatDate(date){
+        return format(date, 'MMM D, YYYY')
       },
 
       updatePopup(showPopup){

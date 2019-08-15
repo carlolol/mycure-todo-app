@@ -9,9 +9,10 @@
       >
 
         <v-col
-          cols="12"
-          sm="8"
-          md="4"
+          cols="10"
+          sm="7"
+          md="5"
+          lg="4"
         >
 
           <v-card elevation="5">
@@ -33,6 +34,7 @@
                   type="text"
                   v-model="username"
                   :rules="usernameRules"
+                  @keyup.enter="validate"
                 >
                 </v-text-field>
 
@@ -43,11 +45,19 @@
                   type="password"
                   v-model="password"
                   :rules="passwordRules"
+                  @keyup.enter="validate"
                 >
                 </v-text-field>
 
               </v-form>
               
+              <p 
+                class="my-2 pl-5 red--text caption"
+                v-if="hasError"
+              >
+                {{ errorMessage }}
+              </p>
+
             </v-card-text>
 
             <v-card-actions>
@@ -125,7 +135,9 @@
       passwordRules: [
         v => !!v || 'Please enter your password',
       ],
-      isSubmitting: false
+      isSubmitting: false,
+      errorMessage: "",
+      hasError: false
     }),
     computed: {
       ...mapGetters([
@@ -146,11 +158,14 @@
           this.$store.dispatch('signInAction', user)
             .then((e) => {
               this.isSubmitting = false;
+              this.hasError = false;
+              this.errorMessage = "";
               this.$router.push('/home');
             })
             .catch((error) => {
               this.isSubmitting = false;
-              console.log(error);
+              this.hasError = true;
+              this.errorMessage = error;
             });
         }
       }

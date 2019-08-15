@@ -45,6 +45,16 @@
                     :rules="inputRules"
                     v-model="deadline"
                     readonly
+                    v-if="deadline"
+                  />
+                  <v-text-field 
+                    v-on="on" 
+                    placeholder="Deadline" 
+                    append-outer-icon="mdi-calendar-range"
+                    :rules="inputRules"
+                    :value="deadlineValue"
+                    readonly
+                    v-else
                   />
                 </v-flex>
               </v-layout>
@@ -52,6 +62,12 @@
             <v-date-picker 
               v-model="deadline" 
               no-title
+              v-if="deadline"
+            ></v-date-picker>
+            <v-date-picker 
+              v-model="deadlineValue" 
+              no-title
+              v-else
             ></v-date-picker>
           </v-menu>
         </v-form>
