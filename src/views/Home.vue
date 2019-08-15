@@ -60,25 +60,45 @@
                 <v-toolbar-title>
                   {{ todo.name }}
                 </v-toolbar-title>
+
                 <v-spacer></v-spacer>
-                <v-btn 
-                  fab
-                  text
-                  x-small
-                  @click.stop="updatePopup(true)"
-                >
-                  <v-icon>mdi-pencil-outline</v-icon>
-                </v-btn>
-                <v-btn 
-                  fab
-                  text
-                  x-small
-                  color="orange"
-                  @click.stop="deleteTodo(todo.id)"
-                  :loading="isLoading"
-                >
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                </v-btn>
+
+                <v-tooltip bottom>
+                  
+                  <template v-slot:activator="{ on }">
+                    <v-btn 
+                      fab
+                      text
+                      x-small
+                      @click.stop="updateIsEdit(true, todo.id)"
+                      v-on="on"
+                    >
+                      <v-icon>mdi-pencil-outline</v-icon>
+                    </v-btn>
+                  </template>
+
+                  <span>Edit</span>
+                </v-tooltip>
+
+                <v-tooltip bottom>
+
+                  <template v-slot:activator="{ on }">
+                    <v-btn 
+                      fab
+                      text
+                      x-small
+                      color="orange"
+                      @click.stop="deleteTodo(todo.id)"
+                      :loading="isLoading"
+                      v-on="on"
+                    >
+                      <v-icon>mdi-trash-can-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  
+                  <span>Delete</span>
+                </v-tooltip>
+
               </v-toolbar>
 
               <v-divider class="my-0"></v-divider>
@@ -109,6 +129,7 @@
                   small 
                   :color="getColor(todo.status)" 
                   class="white--text caption my-2"
+                  @click="updateTodoStatus(todo.id, todo.status==='uncompleted' ? 'completed' : 'uncompleted')"
                 >
                   {{ todo.status }}
                 </v-chip>
@@ -127,23 +148,34 @@
   import {mapActions, mapGetters} from 'vuex';
 
   export default {
+
     data: () => ({
       showMoreOptions: false,
       isLoading: false
     }),
+
     computed: {
       ...mapGetters([
         'todos',
         'getTodoById'
       ])
     },
+
     methods: {
+
       getColor: (status) => {
         return status==="completed" ? "#4caf50" : "#f37125";
       },
+
       updatePopup(showPopup){
         this.$store.dispatch('updatePopup', {showPopup: showPopup})
       },
+      
+      updateIsEdit(isEdit, id){
+        this.$store.dispatch('updateIsEdit', {isEdit: isEdit, id: id});
+        this.updatePopup(isEdit);
+      },
+
       deleteTodo(id) {
         this.isLoading = true;
 
@@ -153,9 +185,19 @@
           })
           .catch((error) => {
             this.isLoading = false;
-            console.log(error);
+          })
+      },
+
+      updateTodoStatus(id, status) {
+        this.$store.dispatch('updateTodoStatus', {id: id, status: status})
+          .then((e) => {
+            
+          })
+          .catch((error) => {
+            console.log(error)
           })
       }
+
     }
   };
 </script>

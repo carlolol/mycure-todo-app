@@ -1,18 +1,22 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 import firebase from 'firebase/app';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  
   state: {
     user: null,
     status: null,
     error: null,
     message: null,
     todos: [],
-    showPopup: false
+    showPopup: false,
+    isEdit: false,
+    idToShow: null
   },
+
   mutations: {
     setUser(state, user){
       state.user = user
@@ -32,6 +36,9 @@ export default new Vuex.Store({
     setTodos(state, todos){
       state.todos = todos
     },
+    setIdToShow(state, idToShow){
+      state.idToShow = idToShow
+    },
     addNewTodo(state, todo){
       state.todos.push(todo)
     },
@@ -43,6 +50,9 @@ export default new Vuex.Store({
     },
     setShowPopup(state, showPopup){
       state.showPopup = showPopup
+    },
+    setIsEdit(state, isEdit){
+      state.isEdit = isEdit
     }
   },
 
@@ -142,13 +152,18 @@ export default new Vuex.Store({
       commit('setShowPopup', payload.showPopup)
     },
 
+    updateIsEdit({ commit }, payload){
+      commit('setIsEdit', payload.isEdit)
+      commit('setIdToShow', payload.id)
+    },
+
     createNewTodo({ commit }, payload){
       return new Promise((resolve, reject) => {
         var postData = {
           name: payload.name,
           description: payload.description,
           deadline: payload.deadline,
-          status: 'uncompleted'
+          status: payload.status
         };
 
         var ref = firebase.database().ref('todo/' + this.state.user.uid);
@@ -168,20 +183,6 @@ export default new Vuex.Store({
             commit('setMessage', null)
             reject('Failed. Reason: ' + error.message)
           });
-
-
-      // var updates = {};
-      // updates['/todo/' + this.user.uid + '/' + newPostKey] = postData;
-
-      // Get a key for a new Post.
-      // var newPostKey = firebase.database().ref().child('posts').push().key;
-
-      // // Write the new post's data simultaneously in the posts list and the user's post list.
-      // var updates = {};
-      // updates['/posts/' + newPostKey] = postData;
-      // updates['/user-posts/' + uid + '/' + newPostKey] = postData;
-
-      // return firebase.database().ref().update(updates);
       })
     },
 
@@ -192,6 +193,55 @@ export default new Vuex.Store({
             commit('setStatus', 'success')
             commit('setError', null)
             commit('setMessage', 'Deleted todo successfully.')
+            resolve('Success.')
+          })
+          .catch((error) => {
+            commit('setStatus', 'failed')
+            commit('setError', error.message)
+            commit('setMessage', null)
+            reject('Failed. Reason: ' + error.message)
+          });
+      })
+    },
+
+    updateTodo({ commit }, payload){
+      return new Promise((resolve, reject) => {
+        var postData = {
+          name: payload.name,
+          description: payload.description,
+          deadline: payload.deadline,
+          status: payload.status
+        };
+
+        firebase.database().ref('todo/' + this.state.user.uid + '/' + payload.id)
+          .update(postData)
+          .then(() => {
+            commit('setStatus', 'success')
+            commit('setError', null)
+            commit('setMessage', 'Todo update success.')
+            resolve('Success.')
+          })
+          .catch((error) => {
+            commit('setStatus', 'failed')
+            commit('setError', error.message)
+            commit('setMessage', null)
+            reject('Failed. Reason: ' + error.message)
+          });
+      })
+    },
+
+    updateTodoStatus({ commit }, payload){
+      return new Promise((resolve, reject) => {
+        var postData = {
+          status: payload.status
+        };
+
+        firebase.database().ref('todo/' + this.state.user.uid + '/' + payload.id)
+          .update(postData)
+          .then(() => {
+            commit('setStatus', 'success')
+            commit('setError', null)
+            commit('setMessage', 'Todo update success.')
             resolve('Success.')
           })
           .catch((error) => {
@@ -226,8 +276,17 @@ export default new Vuex.Store({
       return state.showPopup
     },
 
+    showIsEdit(state){
+      return state.isEdit
+    },
+
     getTodoById: (state) => (id) => {
+      // console.log(state.todos.find(todo => todo.id === id))
       return state.todos.find(todo => todo.id === id)
+    },
+
+    idToShow(state){
+      return state.idToShow
     }
 
     // authStatus (state) {
