@@ -62,11 +62,15 @@
             <v-date-picker 
               v-model="deadline" 
               no-title
+              :min="formattedDateYesterday"
+              scrollable
               v-if="deadline"
             ></v-date-picker>
             <v-date-picker 
               v-model="deadlineValue" 
               no-title
+              :min="formattedDateYesterday"
+              scrollable
               v-else
             ></v-date-picker>
           </v-menu>
@@ -99,7 +103,7 @@
 </template>
 
 <script>
-  // import format from 'date-fns/format'
+  import format from 'date-fns/format'
   import {mapActions, mapGetters} from 'vuex';
 
   export default {
@@ -126,9 +130,9 @@
         'getTodoById'
       ]),
 
-      // formattedDate() {
-      //   return this.deadline ? format(this.deadline, 'MMM D, YYYY') : ''
-      // },
+      formattedDateYesterday() {
+        return format(Date(Date.now()), 'YYYY-MM-D')
+      },
 
       titleValue: {
         get(){
@@ -203,14 +207,30 @@
       submit() {
         if(this.$refs.form.validate()){
           this.isSubmitting = true;
-          const todo = {
-            name: this.title,
-            description: this.description,
-            deadline: this.deadline,
-            status: this.showIsEdit ? this.getTodoById(this.idToShow).status : 'uncompleted',
-            id: this.idToShow
-            // deadline: format(this.deadline, 'MMM D, YYYY')
-          };
+          var todo;
+
+          if(this.showIsEdit)
+            todo = {
+              name: !this.title ? this.getTodoById(this.idToShow).name : this.title,
+              description: !this.description ? this.getTodoById(this.idToShow).description : this.description,
+              deadline: !this.deadline ? this.getTodoById(this.idToShow).deadline : this.deadline,
+              status: this.getTodoById(this.idToShow).status,
+              id: this.idToShow
+            };
+          else
+            todo = {
+              name: this.title,
+              description: this.description,
+              deadline: this.deadline,
+              status: 'uncompleted',
+              id: this.idToShow
+            };
+
+          // console.log('showIsEdit: ' + this.showIsEdit);
+          // console.log('description bool: ' + !!this.description);
+          // console.log('description original: ' + this.getTodoById(this.idToShow).description);
+          // console.log('description local: ' + this.description);
+          // console.log(todo);
 
           this.$store.dispatch(this.showIsEdit ? 'updateTodo' : 'createNewTodo', todo)
             .then((e) => {

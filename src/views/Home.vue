@@ -10,18 +10,6 @@
         align-self="center"
         class="pb-0"
       >
-      <!-- <v-text-field
-        label="Title"
-        solo
-        class="pb-0"
-        :v-show="showMoreOptions"
-      ></v-text-field>
-      <v-text-field
-        label="Create New Todo"
-        solo
-        class="pb-0"
-        @click="showMoreOptions=true"
-      ></v-text-field> -->
       </v-col>
     </v-row>
       
