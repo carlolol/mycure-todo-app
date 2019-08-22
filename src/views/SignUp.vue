@@ -28,8 +28,7 @@
                   fab
                   text
                   small
-                  router
-                  to="/"
+                  @click="goBack()"
                 >
                   <v-icon>mdi-chevron-left</v-icon>
                 </v-btn>
@@ -99,7 +98,6 @@
 </template>
 
 <script>
-  import {mapActions, mapGetters} from 'vuex';
 
   export default {
     props: {
@@ -121,6 +119,9 @@
       errorMessage: ""
     }),
     methods: {
+      goBack() {
+        this.$router.go(-1);
+      },
       validate () {
         if (this.$refs.form.validate()) {
           this.isSubmitting = true;
