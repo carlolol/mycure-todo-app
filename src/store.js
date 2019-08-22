@@ -62,7 +62,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('setStatus', 'loading')
         firebase.auth().createUserWithEmailAndPassword(payload.username, payload.password)
-          .then((response) => {
+          .then(() => {
             commit('setUser', null)
             commit('setStatus', 'success')
             commit('setError', null)
